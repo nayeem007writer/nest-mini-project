@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = "mongodb+srv://nayeemahammed853:fFBJXco4UPgSYdZU@cluster0.u6kjcqr.mongodb.net/myDatabase?retryWrites=true&w=majority"
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  phone       String
+  email       String @unique
+  password    String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  user_type   UserType
+  home        Home []
+  buyer_messages  Message [] @relation("buyer_messages")
+  realtor_messages Message[] @relation("realtor_messages")
+}
+
+model Message {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  message         String
+  homeId          String @db.ObjectId
+  home            Home  @relation( fields: [homeId], references: [id])
+  realtor_id      String @db.ObjectId
+  realtor         User @relation ( "realtor_messages",fields: [realtor_id], references: [id])
+  buyer_id        String @db.ObjectId
+  buyer           User @relation( "buyer_messages",fields: [buyer_id], references: [id])
+
+}
+
+model Home {
+  id                         String @id @default(auto()) @map("_id") @db.ObjectId
+  address                    String
+  number_of_bedrooms         Int
+  number_od_bathrooms        Float
+  city                       String
+  listed_time                DateTime @default(now())
+  price                      Float
+  land_size                  Float
+  property_type              PropertyType
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @updatedAt
+  images                     Image []
+  homeId                     String @db.ObjectId
+  home                       User   @relation(fields: [homeId], references: [id])
+  message                    Message []
+
+} 
+
+model Image {
+ id               String @id @default(auto()) @map("_id") @db.ObjectId
+ url              String 
+ homeId          String @db.ObjectId
+ home             Home @relation(fields: [homeId], references: [id], onDelete: Cascade)
+}
+
+enum PropertyType {
+  RESIDENTIAL 
+  CONDO
+}
+
+enum UserType {
+  BUYER
+  REALTOR
+  ADMIN
+}
