@@ -49,8 +49,8 @@ model Home {
   created_at                 DateTime @default(now())
   updated_at                 DateTime @updatedAt
   images                     Image []
-  homeId                     String @db.ObjectId
-  home                       User   @relation(fields: [homeId], references: [id])
+  realtor_id                    String @db.ObjectId
+  realtor                       User   @relation(fields: [realtor_id], references: [id])
   message                    Message []
 
 } 
